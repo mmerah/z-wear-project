@@ -49,7 +49,7 @@ int main(void)
 	#endif
 
 	/* Initialize the BLE layer */
-	err = ble_layer_init();
+	int err = ble_layer_init();
     if (err) {
 		LOG_ERR("BLE initialization failed, err %d", err);
 		return err;

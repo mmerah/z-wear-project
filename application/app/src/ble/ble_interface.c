@@ -12,7 +12,7 @@
 
 #include "ble_interface.h"
 /* Sensor interface functions */
-#include "../sensors/ensor_interface.h"
+#include "../sensors/sensor_interface.h"
 
 /** Semaphore for extern use for indicating that a device has connected to the sensor. */
 extern struct k_sem ble_conn;

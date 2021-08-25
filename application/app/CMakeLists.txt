@@ -26,6 +26,9 @@ target_sources(app PRIVATE ${ble_services})
 FILE(GLOB sensors_sources src/sensors/*.c)
 target_sources(app PRIVATE ${sensors_sources})
 
+FILE(GLOB battery_sources src/sensors/battery/*.c)
+target_sources(app PRIVATE ${battery_sources})
+
 add_subdirectory(drivers)
 
 # Get current time
