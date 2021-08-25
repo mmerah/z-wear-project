@@ -18,6 +18,6 @@ west zephyr-export
 
 # Change toolchain variables to use gnuarmemb. In bashrc to make it permanent.
 echo 'export ZEPHYR_TOOLCHAIN_VARIANT=gnuarmemb' >> ~/.bashrc
-echo 'export GNUARMEMB_TOOLCHAIN_PATH=~/miniconda3/envs/cobrax_env' >> ~/.bashrc
+echo 'export GNUARMEMB_TOOLCHAIN_PATH=~/miniconda3/envs/dev_env' >> ~/.bashrc
 
 # Restart terminal after launching this script.

@@ -61,3 +61,16 @@ dkms.conf
 /test*
 /tools*
 /zephyr*
+
+# editors
+.vscode
+*.swp
+*~
+
+#python
+.venv
+test.py
+
+# build
+/build*
+/application/build*
