@@ -50,3 +50,14 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+# From the cobrax environment setup
+/.west*
+/bootloader*
+/mbedtls*
+/modules*
+/nrf*
+/nrfxlib*
+/test*
+/tools*
+/zephyr*
