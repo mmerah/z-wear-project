@@ -13,7 +13,7 @@
 
 /* Logging module */
 #include <logging/log.h>
-LOG_MODULE_REGISTER(battery, LOG_LEVEL_ERR);
+LOG_MODULE_REGISTER(battery, LOG_LEVEL_INF);
 
 /** Device structure for the Battery sensor device. */
 const struct device *dev_batt;

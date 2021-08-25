@@ -25,7 +25,7 @@ extern struct k_sem ble_init_c;
 
 /* Logging module */
 #include <logging/log.h>
-LOG_MODULE_REGISTER(ble_interface, LOG_LEVEL_ERR);
+LOG_MODULE_REGISTER(ble_interface, LOG_LEVEL_INF);
 
 /* Reboot library */
 #include <sys/reboot.h>

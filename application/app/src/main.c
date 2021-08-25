@@ -60,6 +60,13 @@ int main(void)
 	/* Initialize the Bluetooth mcumgr transport. */
 	smp_bt_register();
 	#endif
+
+	/* Initialize the battery sensor handler */
+	err = bas_init();
+	if (err) {
+		LOG_ERR("Battery sensor handler did not initialize, err %d", err);
+		return err;
+	}
 	
 	/* Initialize the BLE timeout for no connection */
 	err = ble_timeout_start();

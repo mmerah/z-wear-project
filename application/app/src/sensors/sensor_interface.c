@@ -14,7 +14,7 @@
 
 /* Logging module */
 #include <logging/log.h>
-LOG_MODULE_REGISTER(sensor_interface, LOG_LEVEL_ERR);
+LOG_MODULE_REGISTER(sensor_interface, LOG_LEVEL_INF);
 
 /*******************************************************************************
  *** SENSOR CONTROL INTERFACES
