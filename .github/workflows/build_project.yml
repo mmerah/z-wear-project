@@ -1,0 +1,55 @@
+# This is a basic workflow to help you get started with Actions
+
+name: Build and Release Latest
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container: zephyrprojectrtos/ci:latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 2
+          path: z-wear-project
+
+      - name: Initialize
+        working-directory: z-wear-project
+        run: |
+          sudo apt install binutils-arm-none-eabi
+          pip3 install -U west
+          west init -m https://github.com/nrfconnect/sdk-nrf --mr v1.6.0-rc2
+          west update
+          west zephyr-export
+          pip3 install -r zephyr/scripts/requirements.txt
+          pip3 install -r nrf/scripts/requirements.txt
+          pip3 install -r bootloader/mcuboot/scripts/requirements.txt
+          
+      - name: Build firmware
+        working-directory: z-wear-project
+        run: |
+          west build application/app/ -b nrf52840dk_nrf52840
+          
+      - name: Archive firmware
+        uses: actions/upload-artifact@v2
+        with:
+          name: firmware
+          path: z-wear-project/build/zephyr/zephyr.*
+          
+      - name: Automatic Releases
+        uses: marvinpinto/action-automatic-releases@v1.2.1
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          automatic_release_tag: "latest"
+          prerelease: true
+          title: "Development Build"
+          files: |
+            cobrax/LICENSE
+            cobrax/build/zephyr/app_update.bin
+            cobrax/build/zephyr/merged.hex
