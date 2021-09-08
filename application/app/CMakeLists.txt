@@ -35,7 +35,8 @@ add_subdirectory(drivers)
 string(TIMESTAMP CURRENT_TIME %Y-%m-%dT%H:%M:%S)
 
 # Version
-file(READ VERSION ver)
+set(SourceVersionFile "${CMAKE_CURRENT_SOURCE_DIR}/info/version.txt")
+file(READ ${SourceVersionFile} ver)
 
 string(REGEX MATCH "VERSION_MAJOR = ([0-9]*)" _ ${ver})
 set(ZWEAR_VERSION_MAJOR ${CMAKE_MATCH_1})
