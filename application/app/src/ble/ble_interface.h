@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Nanoleq AG
+ * Copyright (c) 2021
  *
  * SPDX-License-Identifier: Apache-2.0
  */
@@ -50,7 +50,7 @@
 /**
  * @brief Initialize the BLE layer.
  * 
- * Starts all Nanoleq device services and begins advertising.
+ * Starts all device services and begins advertising.
  * Also sets up all callbacks for connection, disconnection
  * and LE parameters updates/requires.
  * 

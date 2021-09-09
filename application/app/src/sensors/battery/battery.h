@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021, Nanoleq AG
+ * Copyright (c) 2021
  *
  * SPDX-License-Identifier: Apache-2.0
  */
