@@ -1,0 +1,5 @@
+tests:
+  # section.subsection
+  bluetooth.services:
+    tags: bluetooth ble services
+    platform_allow: native_posix nrf52840dk_nrf52840

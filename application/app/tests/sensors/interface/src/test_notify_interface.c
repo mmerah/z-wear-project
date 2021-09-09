@@ -32,3 +32,7 @@ void test_bas_notify(void)
     int16_t fake_batt_level = 90;
     zassert_ok(bas_notify(fake_batt_level), "Failed BAS notify interface");
 }
+
+/**
+ * @}
+ */

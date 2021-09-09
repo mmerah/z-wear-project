@@ -1,0 +1,5 @@
+tests:
+  # section.subsection
+  bluetooth.interface:
+    tags: bluetooth ble init
+    platform_allow: native_posix nrf52840dk_nrf52840
