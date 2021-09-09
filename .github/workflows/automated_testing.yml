@@ -1,0 +1,37 @@
+name: Automated Testing
+
+on:
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container: zephyrprojectrtos/ci:latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+          path: z-wear-project
+
+      - name: Initialize
+        working-directory: z-wear-project
+        run: |
+          pip3 install -U west
+          west init -m https://github.com/nrfconnect/sdk-nrf --mr v1.6.0-rc2
+          west update
+          west zephyr-export
+          pip3 install -r zephyr/scripts/requirements.txt
+
+      - name: Run all tests
+        working-directory: z-wear-project
+        run: |
+          zephyr/scripts/twister --coverage -p native_posix -p nrf52840dk_nrf52840 -T application/app/tests/ -W
+          
+      - name: Publish Unit Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v1
+        if: always()
+        with:
+          files: z-wear-project/twister-out/twister_report.xml

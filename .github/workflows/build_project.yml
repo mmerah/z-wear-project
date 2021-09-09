@@ -52,6 +52,6 @@ jobs:
           prerelease: true
           title: "Development Build"
           files: |
-            cobrax/LICENSE
-            cobrax/build/zephyr/app_update.bin
-            cobrax/build/zephyr/merged.hex
+            z-wear-project/LICENSE
+            z-wear-project/build/zephyr/app_update.bin
+            z-wear-project/build/zephyr/merged.hex
