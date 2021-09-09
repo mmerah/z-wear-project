@@ -15,6 +15,9 @@
 /* Authentication function */
 #include "../authentication/authentication.h"
 
+/* Settings storage functions */
+#include "../../settings/settings_storage.h"
+
 /* Logging module */
 #include <logging/log.h>
 LOG_MODULE_REGISTER(authentication_service, CONFIG_BT_BAS_LOG_LEVEL);
@@ -39,7 +42,12 @@ static ssize_t on_receive_auth(struct bt_conn *conn,
 
     /* Buffer is the challenge data */
     uint8_t sha_256_result[32];
-    hmac_compute(buffer, len, sha_256_result);
+    /* Initialize the secret */
+    char secret[16];
+    get_secret_key(secret);
+    secret[15] = '\0';
+    /* Compute the MAC and send it for notification */
+    hmac_compute(buffer, secret, len, sha_256_result);
     auth_service_send(connection_get(), sha_256_result, sizeof(sha_256_result));
 	return len;
 }

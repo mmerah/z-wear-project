@@ -33,9 +33,10 @@
  * through an encrypted BLE connection and the secret key stored
  * in a separate file.
  * @param[in] host_challenge Received host_challenge to be computed.
+ * @param[in] secret Secret key used for computing the MAC
  * @param[in] length_challenge Size of the challenge.
  * @param[out] result Table with the 32 bytes-sized SHA-256 result.
  */
-void hmac_compute(const char *host_challenge, uint16_t length_challenge, uint8_t *result);
+void hmac_compute(const char *host_challenge, const char *secret, uint16_t length_challenge, uint8_t *result);
 
 #endif /* _AUTHENTICATION_H */

@@ -12,20 +12,12 @@
 
 #include "authentication.h"
 
-/* Settings storage functions */
-#include "../../settings/settings_storage.h"
-
 /* Logging module */
 #include <logging/log.h>
 LOG_MODULE_REGISTER(authentication, LOG_LEVEL_ERR);
 
-void hmac_compute(const char *host_challenge, uint16_t length_challenge, uint8_t *result)
+void hmac_compute(const char *host_challenge, const char *secret, uint16_t length_challenge, uint8_t *result)
 {
-    /* Initialize the secret and the challenge */
-    char secret[16];
-    get_secret_key(secret);
-    secret[15] = '\0';
-
     LOG_INF("Secret key is: %s and length is %d\n", secret, strlen(secret));
 
     char challenge[CHALLENGE_MAX_LENGTH] = {0};
