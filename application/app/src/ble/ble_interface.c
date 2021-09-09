@@ -76,8 +76,7 @@ void ble_handler(void)
 		/* Pause the advertising to shut off the radio (TBV) */
 		ble_layer_pause();
 
-		/* Reboots the device to get back to the lowest
-			current consumption. Uncomment to reactivate. */
+		/* Reboots the device. Uncomment to reactivate. */
 		/*sys_reboot(SYS_REBOOT_COLD);*/
 
 		#if defined(CONFIG_ARCH_POSIX)

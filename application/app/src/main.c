@@ -20,6 +20,9 @@
 /* Sensor interface functions */
 #include "sensors/sensor_interface.h"
 
+/* Settings Interface functions */
+#include "settings/settings_storage.h"
+
 /* Logging module */
 #include <logging/log.h>
 LOG_MODULE_REGISTER(main, LOG_LEVEL_ERR);
@@ -48,8 +51,17 @@ int main(void)
 	img_mgmt_register_group();
 	#endif
 
+	int err = -1;
+
+	/* Initialize the storage */
+	err = storage_initialization();
+	if (err) {
+		LOG_ERR("Storage initialization failed, err %d", err);
+		return err;
+	}
+
 	/* Initialize the BLE layer */
-	int err = ble_layer_init();
+	err = ble_layer_init();
     if (err) {
 		LOG_ERR("BLE initialization failed, err %d", err);
 		return err;

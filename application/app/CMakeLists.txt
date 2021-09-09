@@ -20,8 +20,14 @@ target_sources(app PRIVATE ${main_sources})
 FILE(GLOB ble_sources src/ble/*.c)
 target_sources(app PRIVATE ${ble_sources})
 
+FILE(GLOB storage_sources src/settings/*.c)
+target_sources(app PRIVATE ${storage_sources})
+
 FILE(GLOB ble_services src/ble/services/*.c)
 target_sources(app PRIVATE ${ble_services})
+
+FILE(GLOB ble_authentication_sources src/ble/authentication/*.c)
+target_sources(app PRIVATE ${ble_authentication_sources})
 
 FILE(GLOB sensors_sources src/sensors/*.c)
 target_sources(app PRIVATE ${sensors_sources})
@@ -35,7 +41,8 @@ add_subdirectory(drivers)
 string(TIMESTAMP CURRENT_TIME %Y-%m-%dT%H:%M:%S)
 
 # Version
-file(READ VERSION ver)
+set(SourceVersionFile "${CMAKE_CURRENT_SOURCE_DIR}/info/version.txt")
+file(READ ${SourceVersionFile} ver)
 
 string(REGEX MATCH "VERSION_MAJOR = ([0-9]*)" _ ${ver})
 set(ZWEAR_VERSION_MAJOR ${CMAKE_MATCH_1})
@@ -49,6 +56,10 @@ set(ZWEAR_VERSION_PATCH ${CMAKE_MATCH_1})
 string(REGEX MATCH "VERSION_TWEAK = ([0-9]*)" _ ${ver})
 set(ZWEAR_VERSION_TWEAK ${CMAKE_MATCH_1})
 
+# Authentication key
+set(SourceAuthFile "${CMAKE_CURRENT_SOURCE_DIR}/info/authentication_key.txt")
+file(STRINGS ${SourceAuthFile} key)
+
 # Get short commit hash
 execute_process(
   COMMAND ${GIT_EXECUTABLE} describe --tags --dirty
@@ -56,4 +67,9 @@ execute_process(
   OUTPUT_VARIABLE FW_BUILD_GIT
   OUTPUT_STRIP_TRAILING_WHITESPACE
 )
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DCURRENT_TIME_OF_BUILD=\"${CURRENT_TIME}\" -DFW_BUILD=\"${FW_BUILD_GIT}\" -DSW_REVISION=\"${ZWEAR_VERSION_MAJOR}.${ZWEAR_VERSION_MINOR}.${ZWEAR_VERSION_PATCH}.${ZWEAR_VERSION_TWEAK}\"")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} \
+                  -DCURRENT_TIME_OF_BUILD=\"${CURRENT_TIME}\" \
+                  -DSECRET_KEY=\"${key}\" \
+                  -DFW_BUILD=\"${FW_BUILD_GIT}\" \
+                  -DSW_REVISION=\"${ZWEAR_VERSION_MAJOR}.${ZWEAR_VERSION_MINOR}.${ZWEAR_VERSION_PATCH}.${ZWEAR_VERSION_TWEAK}\" \
+                  ")
