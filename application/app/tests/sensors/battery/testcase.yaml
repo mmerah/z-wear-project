@@ -1,0 +1,5 @@
+tests:
+  # section.subsection
+  sensors.battery:
+    tags: sensor hal battery
+    platform_allow: native_posix nrf52840dk_nrf52840
