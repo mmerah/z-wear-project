@@ -74,3 +74,7 @@ test.py
 # build
 /build*
 /application/build*
+
+# twister out
+/twister-out*
+/application/twister-out*
