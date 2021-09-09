@@ -52,17 +52,13 @@ int main(void)
 	#endif
 
 	int err = -1;
-	
-	//k_sleep(K_MSEC(10000));
 
 	/* Initialize the storage */
-	/*
 	err = storage_initialization();
 	if (err) {
 		LOG_ERR("Storage initialization failed, err %d", err);
 		return err;
 	}
-	*/
 
 	/* Initialize the BLE layer */
 	err = ble_layer_init();
