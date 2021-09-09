@@ -35,3 +35,21 @@ jobs:
         if: always()
         with:
           files: z-wear-project/twister-out/twister_report.xml
+
+      - name: Prepare the coverage file
+        working-directory: z-wear-project
+        shell: bash
+        run: |
+          grep -B 9999999 "modules/crypto/tinycrypt/lib/source/hmac.c" twister-out/coverage.info > twister-out/coverage_edited.info
+          
+      - name: Prepare the coverage file 2
+        working-directory: z-wear-project
+        shell: bash
+        run: |
+          head -n-2 twister-out/coverage_edited.info > twister-out/coverage_edited2.info
+
+      - name: Code coverage report
+        uses: romeovs/lcov-reporter-action@v0.2.16
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          lcov-file: z-wear-project/twister-out/coverage_edited2.info
