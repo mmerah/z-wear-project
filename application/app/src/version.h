@@ -14,4 +14,7 @@
 #define FW_VERSION _xstr(FW_BUILD)
 #define SW_VERSION _xstr(SW_REVISION)
 
+/* Stringify secret key data included by cmake */
+#define SECRET_AUTH_KEY _xstr(SECRET_KEY)
+
 #endif /* VERSION__H */

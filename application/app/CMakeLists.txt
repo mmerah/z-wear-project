@@ -20,8 +20,14 @@ target_sources(app PRIVATE ${main_sources})
 FILE(GLOB ble_sources src/ble/*.c)
 target_sources(app PRIVATE ${ble_sources})
 
+FILE(GLOB storage_sources src/settings/*.c)
+target_sources(app PRIVATE ${storage_sources})
+
 FILE(GLOB ble_services src/ble/services/*.c)
 target_sources(app PRIVATE ${ble_services})
+
+FILE(GLOB ble_authentication_sources src/ble/authentication/*.c)
+target_sources(app PRIVATE ${ble_authentication_sources})
 
 FILE(GLOB sensors_sources src/sensors/*.c)
 target_sources(app PRIVATE ${sensors_sources})
