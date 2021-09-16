@@ -60,7 +60,12 @@ int ble_timeout_start(void)
 	 * Starts the ble timeout timer on disconnection. 
 	 * This is a one shot timer that expires after 30 seconds.
 	 */
-    ble_layer_resume();
+    int rc = ble_layer_resume();
+    if (rc)
+    {
+        LOG_ERR("Could not restart the BLE layer (err %d)", rc);
+        return rc;
+    }
     k_timer_start(&ble_timeout_timer, K_SECONDS(30), K_NO_WAIT);
     return 0;
 }
@@ -78,7 +83,11 @@ void ble_handler(void)
         k_sem_take(&ble_timeout, K_FOREVER);
 
         /* Pause the advertising to shut off the radio (TBV) */
-        ble_layer_pause();
+        int rc = ble_layer_pause();
+        if (rc)
+        {
+            LOG_ERR("Could not pause the advertising (err %d)", rc);
+        }
 
         /* Reboots the device. Uncomment to reactivate. */
         /*sys_reboot(SYS_REBOOT_COLD);*/

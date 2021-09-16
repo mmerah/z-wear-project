@@ -79,15 +79,32 @@ int param_handle_get(const char *name, char *val, int val_len_max)
 /**
  * @brief Loads the subtree from the storage containing the data.
  * Also update the number of power cycles.
+ * @return 0 on success, 0 otherwise
  */
-static void just_load_stuff(void)
+static int just_load_stuff(void)
 {
+    int rc = -1;
+
     /* Loading the subtree */
-    settings_load_subtree("zwear/param");
+    rc = settings_load_subtree("zwear/param");
+    if (rc)
+    {
+        LOG_ERR("Could not load subtree (err %d)", rc);
+        return rc;
+    }
+
     /* Increment the power cycle */
     //iteration++;
+
     /* Save any changes */
-    settings_save();
+    rc = settings_save();
+    if (rc)
+    {
+        LOG_ERR("Could not save current items");
+        return rc;
+    }
+
+    return 0;
 }
 
 int storage_initialization(void)
@@ -100,8 +117,13 @@ int storage_initialization(void)
         LOG_ERR("settings subsys initialization: fail (err %d)", rc);
         return rc;
     }
-    just_load_stuff();
-    return rc;
+    
+    rc = just_load_stuff();
+    {
+        return rc;
+    }
+
+    return 0;
 }
 
 int get_secret_key(char stored_key[16])
