@@ -1,0 +1,9 @@
+# Copyright (c) 2021 
+#
+# SPDX-License-Identifier: Apache-2.0
+
+menuconfig LC709204
+	bool "LC709204 Fuel Gauge"
+	depends on I2C
+	help
+	  Enable I2C-based driver for LC709204 Fuel Gauge.

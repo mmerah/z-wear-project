@@ -1,0 +1,53 @@
+/*
+ * Copyright (c) 2021
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+/// @file lc709204.h
+
+#ifndef ZEPHYR_DRIVERS_SENSOR_BATTERY_LC709204_H_
+#define ZEPHYR_DRIVERS_SENSOR_BATTERY_LC709204_H_
+
+#include <logging/log.h>
+LOG_MODULE_REGISTER(lc709204, CONFIG_SENSOR_LOG_LEVEL);
+
+/** REGISTER ADDRESS */
+#define LC709204_REG_TIMETOEMPTY 0x03
+#define LC709204_REG_BEFORE_RSOC 0x04
+#define LC709204_REG_TIMETOFULL 0x05
+#define LC709204_REG_TSENSE1_B 0x06
+#define LC709204_REG_INITIAL_RSOC 0x07
+#define LC709204_REG_CELL_TEMPERATURE_TSENSE1 0x08
+#define LC709204_REG_CELL_VOLTAGE 0x09
+#define LC709204_REG_CURRENT_DIRECTION 0x0A
+#define LC709204_REG_APA 0x0B
+#define LC709204_REG_APT 0x0C
+#define LC709204_REG_RSOC 0x0D
+#define LC709204_REG_TSENSE2_B 0x0E
+#define LC709204_REG_ITE 0x0F
+#define LC709204_REG_IC_VERSION 0x11
+#define LC709204_REG_CHANGE_OF_PARAMETER 0x12
+#define LC709204_REG_ALARM_LOW_RSOC 0x13
+#define LC709204_REG_ALARM_LOW_CELL_VOLTAGE 0x14
+#define LC709204_REG_IC_POWER_MODE 0x15
+#define LC709204_REG_STATUS_BIT 0x16
+#define LC709204_REG_CYCLE_COUNT 0x17
+#define LC709204_REG_BATTERY_STATUS 0x19
+
+struct lc709204_data
+{
+	const struct device *i2c;
+	uint16_t state_of_charge;
+};
+
+struct lc709204_config
+{
+	char *bus_name;
+	uint16_t design_voltage;
+	uint16_t design_capacity;
+	uint16_t terminate_voltage;
+	uint16_t tsense1_b_constant;
+};
+
+#endif /* ZEPHYR_DRIVERS_SENSOR_BATTERY_LC709204_H_ */
