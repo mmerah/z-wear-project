@@ -25,6 +25,24 @@
 #include "../version.h"
 
 /**
+ * @brief Battery parameters structure.
+ *
+ * This structure represents the parameters from the battery.
+ * This is the data that gets stored in the Flash.
+ */
+struct batt_param_t
+{
+    /** Battery design voltage in mV */
+    int16_t voltage;
+    /** Battery capacity in mAh. */
+    int16_t capacity;
+    /** Power cycle iterator. */
+    uint16_t n_power;
+    /** Battery type. */
+    char batt_typ[6];
+};
+
+/**
  * @brief Settings API set handler.
  * Set value handler of settings items identified by keyword names.
  * @param[in] name Or key. The name with skipped part that was used as 
@@ -66,6 +84,13 @@ int param_handle_get(const char *name, char *val, int val_len_max);
  * @return rc on failure. 0 on success.
  */
 int storage_initialization(void);
+
+/**
+ * @brief Gets the battery parameters.
+ * @param[out] batt_param Battery parameters fetched from the flash storage.
+ * @return 0 if success.
+ */
+int get_battery_parameters(struct batt_param_t *batt_param);
 
 /**
  * @brief Gets the secret key.
