@@ -6,3 +6,4 @@
 
 add_subdirectory_ifdef(CONFIG_MC3672		mc3672)
 add_subdirectory_ifdef(CONFIG_LC709204      lc709204)
+add_subdirectory_ifdef(CONFIG_LDC1612		ldc1612)

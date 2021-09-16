@@ -1,2 +1,3 @@
 rsource "mc3672/Kconfig"
 rsource "lc709204/Kconfig"
+rsource "ldc1612/Kconfig"

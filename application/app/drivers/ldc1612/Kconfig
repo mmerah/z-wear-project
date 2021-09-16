@@ -1,0 +1,10 @@
+# SPDX-License-Identifier: Apache-2.0
+
+menuconfig LDC1612
+	bool "LDC1612 I2C inductance sensor driver"
+	depends on I2C
+	help
+	  Enable driver for LDC1612 inductance sensor drive
+
+config LDC1612_TRIGGER
+	bool
