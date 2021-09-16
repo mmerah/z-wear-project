@@ -1,0 +1,57 @@
+# SPDX-License-Identifier: Apache-2.0
+
+menuconfig MC3672
+	bool "MC3672 3-Axis Accelerometer Device"
+	depends on I2C
+	help
+	  Enable driver for MC3672 I2C-based 3-axis accelerometer device.
+
+if MC3672
+
+choice
+	prompt "Trigger mode"
+	default MC3672_TRIGGER_GLOBAL_THREAD
+	help
+	  Specify the type of triggering to be used by the driver.
+
+config MC3672_TRIGGER_NONE
+	bool "No trigger"
+
+config MC3672_TRIGGER_GLOBAL_THREAD
+	bool "Use global thread"
+	depends on GPIO
+	select MC3672_TRIGGER
+
+config MC3672_TRIGGER_OWN_THREAD
+	bool "Use own thread"
+	depends on GPIO
+	select MC3672_TRIGGER
+
+endchoice
+
+config MC3672_TRIGGER
+	bool
+
+config MC3672_THREAD_PRIORITY
+	int "Thread priority"
+	depends on MC3672_TRIGGER_OWN_THREAD
+	default 10
+	help
+	  Priority of thread used by the driver to handle interrupts.
+
+config MC3672_THREAD_STACK_SIZE
+	int "Thread stack size"
+	depends on MC3672_TRIGGER_OWN_THREAD
+	default 512
+	help
+	  Stack size of thread used by the driver to handle interrupts.
+
+config MC3672_ACCEL_FS
+	int "Accelerometer full-scale range"
+	default 2
+	help
+	  Magnetometer full-scale range.
+	  An X value for the config represents a range of +/- X g. Valid
+	  values are 2, 4, 8 and 16.
+
+endif # MC3672
