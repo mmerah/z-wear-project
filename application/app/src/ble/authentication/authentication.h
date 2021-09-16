@@ -25,7 +25,7 @@
 #include <zephyr/types.h>
 #include <sys/printk.h>
 
-#define CHALLENGE_MAX_LENGTH        32
+#define CHALLENGE_MAX_LENGTH 32
 
 /**
  * @brief Hash-based Message Authentication Code computing.
@@ -37,6 +37,7 @@
  * @param[in] length_challenge Size of the challenge.
  * @param[out] result Table with the 32 bytes-sized SHA-256 result.
  */
-void hmac_compute(const char *host_challenge, const char *secret, uint16_t length_challenge, uint8_t *result);
+void hmac_compute(const char *host_challenge, const char *secret,
+                  uint16_t length_challenge, uint8_t *result);
 
 #endif /* _AUTHENTICATION_H */

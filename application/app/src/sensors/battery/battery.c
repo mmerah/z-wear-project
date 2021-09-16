@@ -43,7 +43,7 @@ K_TIMER_DEFINE(batt_timer, bas_timer_handler, NULL);
 
 int bas_init(void)
 {
-	/* Indicate to the other threads that the initialization is finished. */
+    /* Indicate to the other threads that the initialization is finished. */
     k_sem_give(&batt_init_ok);
     return 0;
 }
@@ -68,9 +68,10 @@ int bas_start(void)
  * This structure containes a void* for the FIFO initialization. Also,
  * it contains a one sample, and a timestamp in ms for the data. 
  */
-struct data_item_batt_t {
+struct data_item_batt_t
+{
     /** 1st word reserved for use by FIFO */
-    void *fifo_reserved;   
+    void *fifo_reserved;
     /** Contains the data for battery value */
     int16_t data;
 };
@@ -84,52 +85,54 @@ struct data_item_batt_t {
  */
 void batt_process_thread(void)
 {
-    /* Wait for the sensor to be initialized before starting the thread loop. */
+    /* Wait for the sensor to be initialized before starting the thread loop */
     k_sem_take(&batt_init_ok, K_FOREVER);
     k_sem_give(&batt_process_ready);
     struct data_item_batt_t batt_data;
-    while (1) {
+    while (1)
+    {
         /* Semaphore is available every sampling time */
         k_sem_take(&batt_ok, K_FOREVER);
 
-		batt_data.data = 42;
+        batt_data.data = 42;
 
         /* send data to consumers */
         k_fifo_put(&fifo_batt_data, &batt_data);
 
-        #if defined(CONFIG_ARCH_POSIX)
-             k_cpu_idle();
-        #endif
+#if defined(CONFIG_ARCH_POSIX)
+        k_cpu_idle();
+#endif
     }
 }
 
 /**
  * @brief Thread for notifying the Battery service.
- * This thread waits for the processor thread to be ready before starting. Then,
- * it wakes up when the FIFO pile for battery data has an element to sends it through
- * a notification.
+ * This thread waits for the processor thread to be ready before starting. 
+ * Then, it wakes up when the FIFO pile for battery data has an 
+ * element to sends it through a notification.
  */
 void batt_notify_thread(void)
 {
-	k_sem_take(&batt_process_ready, K_FOREVER);
-    struct data_item_batt_t  *rx_data_batt;
-    while (1) {
+    k_sem_take(&batt_process_ready, K_FOREVER);
+    struct data_item_batt_t *rx_data_batt;
+    while (1)
+    {
         /* Notify what is in the fifo as soon as there is something */
         rx_data_batt = k_fifo_get(&fifo_batt_data, K_FOREVER);
         LOG_INF("rx_data_batt = %d \n\n", rx_data_batt->data);
         bas_notify(rx_data_batt->data);
 
-        #if defined(CONFIG_ARCH_POSIX)
-             k_cpu_idle();
-        #endif
+#if defined(CONFIG_ARCH_POSIX)
+        k_cpu_idle();
+#endif
     }
 }
 
-/* Defines the processor thread with its stacksize (to be optimized) and priority. */
-K_THREAD_DEFINE(batt_producer_thread_id, STACKSIZE_BAS_PROCESS, batt_process_thread, NULL, NULL,
-		NULL, PRIORITY_BAS_PROCESS, 0, 0);
-/* Defines the notifying thread with its stacksize (to be optimized) and priority. */
-K_THREAD_DEFINE(batt_notify_thread_id, STACKSIZE_BAS_NOTIFY, batt_notify_thread, NULL, NULL,
-		NULL, PRIORITY_BAS_NOTIFY, 0, 0);
+/* Defines the processor thread with its stacksize and priority. */
+K_THREAD_DEFINE(batt_producer_thread_id, STACKSIZE_BAS_PROCESS,
+                batt_process_thread, NULL, NULL, NULL, PRIORITY_BAS_PROCESS, 0, 0);
+/* Defines the notifying thread with its stacksize and priority. */
+K_THREAD_DEFINE(batt_notify_thread_id, STACKSIZE_BAS_NOTIFY,
+                batt_notify_thread, NULL, NULL, NULL, PRIORITY_BAS_NOTIFY, 0, 0);
 
 /** @} */

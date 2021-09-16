@@ -74,7 +74,8 @@ static void test_param_handle_set_sec_key(void)
 	get_settings_name(fakename);
 	size_t fakelen = strlen(fakename);
 	int fake_cb_arg = 0;
-	zassert_ok(param_handle_set(fakename, fakelen, read_callback, fake_cb_arg), "Could not set the secret key");
+	zassert_ok(param_handle_set(fakename, fakelen, read_callback, fake_cb_arg),
+				"Could not set the secret key");
 }
 
 /**
@@ -87,8 +88,9 @@ static void test_param_handle_set_sec_key_bad_len(void)
 	get_settings_name(fakename);
 	size_t fakelen = strlen(fakename) + 30;
 	int fake_cb_arg = 0;
-	zassert_equal(param_handle_set(fakename, fakelen, read_callback, fake_cb_arg), 
-					0, "Secret key set with wrong length");
+	zassert_equal(param_handle_set(fakename, fakelen,
+								   read_callback, fake_cb_arg),
+				  0, "Secret key set with wrong length");
 }
 
 /**
@@ -99,7 +101,8 @@ static void test_param_handle_set_null(void)
 	char fakename[10] = "TEST";
 	size_t fakelen = strlen(fakename);
 	int fake_cb_arg = 0;
-	zassert_equal(param_handle_set(fakename, fakelen, NULL, fake_cb_arg), -ENOENT, "Not expected (param_handle_set)");
+	zassert_equal(param_handle_set(fakename, fakelen, NULL, fake_cb_arg),
+				  -ENOENT, "Not expected (param_handle_set)");
 }
 
 int export_callback(const char *name, const void *value, size_t val_len)
@@ -112,7 +115,8 @@ int export_callback(const char *name, const void *value, size_t val_len)
  */
 static void test_param_handle_export(void)
 {
-	zassert_ok(param_handle_export(export_callback), "Export handle did not finish as expected");
+	zassert_ok(param_handle_export(export_callback),
+			   "Export handle did not finish as expected");
 }
 
 /**
@@ -123,7 +127,8 @@ static void test_param_handle_get_null(void)
 	char fakename[10] = "TEST";
 	char fakeval[10] = "fake";
 	int fakeval_len_max = 0;
-	zassert_equal(param_handle_get(fakename, fakeval, fakeval_len_max), -ENOENT, "Not expected (param_handle_export");
+	zassert_equal(param_handle_get(fakename, fakeval, fakeval_len_max), -ENOENT,
+				  "Not expected (param_handle_export");
 }
 
 /**
@@ -134,7 +139,8 @@ static void test_param_handle_get_secret(void)
 	char fakename[10] = "secret";
 	char fakeval[10] = "fake";
 	int fakeval_len_max = 0;
-	zassert_ok(param_handle_get(fakename, fakeval, fakeval_len_max), "Could not get secret key param");
+	zassert_ok(param_handle_get(fakename, fakeval, fakeval_len_max),
+			   "Could not get secret key param");
 }
 
 /************************************************
@@ -145,16 +151,15 @@ static void test_param_handle_get_secret(void)
 void test_main(void)
 {
 	ztest_test_suite(test_storage,
-		ztest_unit_test(test_storage_init),
-		ztest_unit_test(test_storage_init_fail),
-		ztest_unit_test(test_get_secret_key),
-		ztest_unit_test(test_param_handle_set_sec_key),
-		ztest_unit_test(test_param_handle_set_sec_key_bad_len),
-		ztest_unit_test(test_param_handle_set_null),
-		ztest_unit_test(test_param_handle_export),
-		ztest_unit_test(test_param_handle_get_null),
-		ztest_unit_test(test_param_handle_get_secret)
-	);
+					 ztest_unit_test(test_storage_init),
+					 ztest_unit_test(test_storage_init_fail),
+					 ztest_unit_test(test_get_secret_key),
+					 ztest_unit_test(test_param_handle_set_sec_key),
+					 ztest_unit_test(test_param_handle_set_sec_key_bad_len),
+					 ztest_unit_test(test_param_handle_set_null),
+					 ztest_unit_test(test_param_handle_export),
+					 ztest_unit_test(test_param_handle_get_null),
+					 ztest_unit_test(test_param_handle_get_secret));
 
 	ztest_run_test_suite(test_storage);
 }

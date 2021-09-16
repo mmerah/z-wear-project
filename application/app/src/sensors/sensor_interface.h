@@ -6,7 +6,8 @@
 
 /** 
  * @file sensor_interface.h
- * @defgroup sensor_interface Sensor Interface: Z-Wear sensor interface definitions and functions.
+ * @defgroup sensor_interface Sensor Interface: Z-Wear sensor 
+ * interface definitions and functions.
  * @brief Functions and definitions for the app to interface with the sensors.
  */
 
@@ -30,13 +31,13 @@
 #include "battery/battery.h"
 
 /** Stacksize for the sensor handler thread */
-#define STACKSIZE_S_HANDLER     256
+#define STACKSIZE_S_HANDLER 256
 /** Priority for the sensor handler thread */
-#define PRIORITY_S_HANDLER      2
+#define PRIORITY_S_HANDLER 2
 
-/*******************************************************************************
+/******************************************************************************
  *** SENSOR CONTROL INTERFACES
- *******************************************************************************/
+ ******************************************************************************/
 /**
  * @brief Starts all sensors.
  * 
@@ -51,9 +52,9 @@ int start_all_sensors(void);
  */
 int stop_all_sensors(void);
 
-/*******************************************************************************
+/******************************************************************************
  *** NOTIFYING INTERFACES
- *******************************************************************************/
+ ******************************************************************************/
 /**
  * @brief Sends a notification of battery level.
  * 

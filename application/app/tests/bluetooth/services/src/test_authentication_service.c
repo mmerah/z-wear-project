@@ -31,8 +31,8 @@ static struct bt_conn *fakeconnexion;
  ***********************************************/
 int get_secret_key(char stored_key[16])
 {
-	stored_key[16] = "aXs6h5cE9h0mDHr";
-	return 0;
+    stored_key[16] = "aXs6h5cE9h0mDHr";
+    return 0;
 }
 
 /************************************************
@@ -46,12 +46,12 @@ int get_secret_key(char stored_key[16])
  */
 void test_auth_service_send(void)
 {
-	uint8_t fakedata = 0;
-	uint16_t fakelen = 1;
-	enable_notify();
-	enable_param();
-	zassert_ok(auth_service_send(fakeconnexion, &fakedata, fakelen), 
-                    "Auth notification not sent");
+    uint8_t fakedata = 0;
+    uint16_t fakelen = 1;
+    enable_notify();
+    enable_param();
+    zassert_ok(auth_service_send(fakeconnexion, &fakedata, fakelen),
+               "Auth notification not sent");
 }
 
 /**
@@ -61,12 +61,12 @@ void test_auth_service_send(void)
  */
 void test_auth_service_send_bad_param(void)
 {
-	uint8_t fakedata = 0;
-	uint16_t fakelen = 1;
-	enable_notify();
-	disable_param();
-	zassert_equal(auth_service_send(fakeconnexion, &fakedata, fakelen), -EINVAL, 
-                    "Auth notification sent but should not");
+    uint8_t fakedata = 0;
+    uint16_t fakelen = 1;
+    enable_notify();
+    disable_param();
+    zassert_equal(auth_service_send(fakeconnexion, &fakedata, fakelen), -EINVAL,
+                  "Auth notification sent but should not");
 }
 
 /**
@@ -76,11 +76,11 @@ void test_auth_service_send_bad_param(void)
  */
 void test_auth_service_send_not_sub(void)
 {
-	uint8_t fakedata = 0;
-	uint16_t fakelen = 1;
-	disable_notify();
-	zassert_equal(auth_service_send(fakeconnexion, &fakedata, fakelen), -ENOTCONN, 
-                    "Auth notification subscribed but should not");
+    uint8_t fakedata = 0;
+    uint16_t fakelen = 1;
+    disable_notify();
+    zassert_equal(auth_service_send(fakeconnexion, &fakedata, fakelen),
+                  -ENOTCONN, "Auth notification subscribed but should not");
 }
 
 /**
@@ -90,14 +90,15 @@ void test_auth_service_send_not_sub(void)
  */
 void test_on_auth_received(void)
 {
-	const struct bt_gatt_attr *fakeattr;
-	const uint8_t buf[2] = {0, 1};
-	uint16_t fakelen = 2;
-	uint16_t fakeoffset = 0;
-	uint8_t fakeflags = 0;
+    const struct bt_gatt_attr *fakeattr;
+    const uint8_t buf[2] = {0, 1};
+    uint16_t fakelen = 2;
+    uint16_t fakeoffset = 0;
+    uint8_t fakeflags = 0;
 
-	zassert_equal(on_receive_auth(fakeconnexion, fakeattr,
-						buf, fakelen, fakeoffset, fakeflags), fakelen, "Auth received callback problem");
+    zassert_equal(on_receive_auth(fakeconnexion, fakeattr,
+                                  buf, fakelen, fakeoffset, fakeflags),
+                  fakelen, "Auth received callback problem");
 }
 
 /**
@@ -107,10 +108,10 @@ void test_on_auth_received(void)
  */
 void test_cccd_changed_auth(void)
 {
-	const struct bt_gatt_attr *fakeattr;
-	uint16_t fakevalue = BT_GATT_CCC_NOTIFY;
-	auth_ccc_cfg_changed(fakeattr, fakevalue);
-	zassert_equal(0, 0, "Auth notification was not enabled");
+    const struct bt_gatt_attr *fakeattr;
+    uint16_t fakevalue = BT_GATT_CCC_NOTIFY;
+    auth_ccc_cfg_changed(fakeattr, fakevalue);
+    zassert_equal(0, 0, "Auth notification was not enabled");
 }
 
 /**
@@ -120,10 +121,10 @@ void test_cccd_changed_auth(void)
  */
 void test_cccd_changed_auth_disable(void)
 {
-	const struct bt_gatt_attr *fakeattr;
-	uint16_t fakevalue = 0x0000;
-	auth_ccc_cfg_changed(fakeattr, fakevalue);
-	zassert_equal(0, 0, "Auth notification was not disabled");
+    const struct bt_gatt_attr *fakeattr;
+    uint16_t fakevalue = 0x0000;
+    auth_ccc_cfg_changed(fakeattr, fakevalue);
+    zassert_equal(0, 0, "Auth notification was not disabled");
 }
 
 /**

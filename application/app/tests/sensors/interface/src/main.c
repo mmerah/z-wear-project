@@ -53,12 +53,11 @@ extern void test_bas_notify(void);
 void test_main(void)
 {
     ztest_test_suite(test_interface,
-		ztest_unit_test(test_start_all_sensors),
-        ztest_unit_test(test_fail_bas_start),
-        ztest_unit_test(test_stop_all_sensors),
-        ztest_unit_test(test_fail_bas_stop),
-        ztest_unit_test(test_bas_notify)
-	);
+                     ztest_unit_test(test_start_all_sensors),
+                     ztest_unit_test(test_fail_bas_start),
+                     ztest_unit_test(test_stop_all_sensors),
+                     ztest_unit_test(test_fail_bas_stop),
+                     ztest_unit_test(test_bas_notify));
 
-	ztest_run_test_suite(test_interface);
+    ztest_run_test_suite(test_interface);
 }

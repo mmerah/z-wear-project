@@ -9,8 +9,8 @@
  * @defgroup main Main: Z-Wear main thread process.
  * @brief Main thread.
  */
- 
- /* Standard and Zephyr libraries */
+
+/* Standard and Zephyr libraries */
 #include <zephyr.h>
 #include <stdio.h>
 
@@ -43,57 +43,61 @@ int main_posix(void)
 int main(void)
 #endif
 {
-	/* Register the built-in mcumgr command handlers. */
-	#ifdef CONFIG_MCUMGR_CMD_OS_MGMT
-	os_mgmt_register_group();
-	#endif
-	#ifdef CONFIG_MCUMGR_CMD_IMG_MGMT
-	img_mgmt_register_group();
-	#endif
+/* Register the built-in mcumgr command handlers. */
+#ifdef CONFIG_MCUMGR_CMD_OS_MGMT
+    os_mgmt_register_group();
+#endif
+#ifdef CONFIG_MCUMGR_CMD_IMG_MGMT
+    img_mgmt_register_group();
+#endif
 
-	int err = -1;
+    int err = -1;
 
-	/* Initialize the storage */
-	err = storage_initialization();
-	if (err) {
-		LOG_ERR("Storage initialization failed, err %d", err);
-		return err;
-	}
+    /* Initialize the storage */
+    err = storage_initialization();
+    if (err)
+    {
+        LOG_ERR("Storage initialization failed, err %d", err);
+        return err;
+    }
 
-	/* Initialize the BLE layer */
-	err = ble_layer_init();
-    if (err) {
-		LOG_ERR("BLE initialization failed, err %d", err);
-		return err;
-	}
+    /* Initialize the BLE layer */
+    err = ble_layer_init();
+    if (err)
+    {
+        LOG_ERR("BLE initialization failed, err %d", err);
+        return err;
+    }
     LOG_INF("BLE initialization successful");
 
-	#ifdef CONFIG_MCUMGR_SMP_BT
-	/* Initialize the Bluetooth mcumgr transport. */
-	smp_bt_register();
-	#endif
+#ifdef CONFIG_MCUMGR_SMP_BT
+    /* Initialize the Bluetooth mcumgr transport. */
+    smp_bt_register();
+#endif
 
-	/* Initialize the battery sensor handler */
-	err = bas_init();
-	if (err) {
-		LOG_ERR("Battery sensor handler did not initialize, err %d", err);
-		return err;
-	}
-	
-	/* Initialize the BLE timeout for no connection */
-	err = ble_timeout_start();
-	if (err) {
-		LOG_ERR("BLE timeout did not initialize, err %d", err);
-		return err;
-	}
-
-    while(1)
+    /* Initialize the battery sensor handler */
+    err = bas_init();
+    if (err)
     {
-		#if defined(CONFIG_ARCH_POSIX)
-			return 0;
-        #endif
-		/* Sleeps to let the idle thread running */
-		k_sleep(K_FOREVER);
-	}
-	return 0;
+        LOG_ERR("Battery sensor handler did not initialize, err %d", err);
+        return err;
+    }
+
+    /* Initialize the BLE timeout for no connection */
+    err = ble_timeout_start();
+    if (err)
+    {
+        LOG_ERR("BLE timeout did not initialize, err %d", err);
+        return err;
+    }
+
+    while (1)
+    {
+#if defined(CONFIG_ARCH_POSIX)
+        return 0;
+#endif
+        /* Sleeps to let the idle thread running */
+        k_sleep(K_FOREVER);
+    }
+    return 0;
 }

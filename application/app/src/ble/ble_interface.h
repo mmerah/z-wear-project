@@ -7,7 +7,8 @@
 /** 
  * @file ble_interface.h
  * @defgroup ble_interface BLE Layer: Z-Wear BLE interface functions
- * @brief Various definitions for the Z-Wear application to interface to the BLE layer.
+ * @brief Various definitions for the Z-Wear application to interface
+ * to the BLE layer.
  */
 
 #ifndef _BLE_INTERFACE_H
@@ -38,14 +39,14 @@
 #include "../version.h"
 
 /** Device Name as defined in the prj.conf */
-#define DEVICE_NAME             CONFIG_BT_DEVICE_NAME
+#define DEVICE_NAME CONFIG_BT_DEVICE_NAME
 /** device name length */
-#define DEVICE_NAME_LEN         (sizeof(DEVICE_NAME) - 1)
+#define DEVICE_NAME_LEN (sizeof(DEVICE_NAME) - 1)
 
 /** Stacksize for the BLE timeout handler */
-#define STACKSIZE_BLE_HANDLER     256
+#define STACKSIZE_BLE_HANDLER 256
 /** Priority for the BLE timeout handler */
-#define PRIORITY_BLE_HANDLER      2
+#define PRIORITY_BLE_HANDLER 2
 
 /**
  * @brief Initialize the BLE layer.
@@ -84,6 +85,6 @@ int ble_timeout_start(void);
  * 
  * @return bt_conn structure.
  */
-struct bt_conn* connection_get(void);
+struct bt_conn *connection_get(void);
 
- #endif /* _BLE_INTERFACE_H */
+#endif /* _BLE_INTERFACE_H */

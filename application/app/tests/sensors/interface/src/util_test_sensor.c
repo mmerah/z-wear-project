@@ -12,7 +12,7 @@
  *  ...STUBS
  ***********************************************/
 int z_impl_k_poll(struct k_poll_event *events, int num_events,
-		  k_timeout_t timeout)
+                  k_timeout_t timeout)
 {
     return 0;
 }

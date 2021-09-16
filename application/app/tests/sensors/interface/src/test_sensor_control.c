@@ -44,7 +44,8 @@ void test_start_all_sensors(void)
 void test_fail_bas_start(void)
 {
     disable_batt();
-    zassert_equal(start_all_sensors(), -EINVAL, "Started sensors despite battery sensor disabled");
+    zassert_equal(start_all_sensors(), -EINVAL,
+                  "Started sensors despite battery sensor disabled");
 }
 
 /**
@@ -62,5 +63,6 @@ void test_stop_all_sensors(void)
 void test_fail_bas_stop(void)
 {
     disable_batt();
-    zassert_equal(stop_all_sensors(), -EINVAL, "stoped sensors despite battery sensor disabled");
+    zassert_equal(stop_all_sensors(), -EINVAL,
+                  "stoped sensors despite battery sensor disabled");
 }
