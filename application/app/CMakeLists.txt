@@ -40,21 +40,22 @@ add_subdirectory(drivers)
 # Get current time
 string(TIMESTAMP CURRENT_TIME %Y-%m-%dT%H:%M:%S)
 
-# Version
-set(SourceVersionFile "${CMAKE_CURRENT_SOURCE_DIR}/info/version.txt")
-file(READ ${SourceVersionFile} ver)
+# FW Version
+set(SourceNcsVersionFile "${CMAKE_CURRENT_SOURCE_DIR}/info/fw_ncs_version.txt")
+file(READ ${SourceNcsVersionFile} ncsver)
 
-string(REGEX MATCH "VERSION_MAJOR = ([0-9]*)" _ ${ver})
-set(ZWEAR_VERSION_MAJOR ${CMAKE_MATCH_1})
+string(REGEX MATCH "NCS_MAJOR = ([0-9]*)" _ ${ncsver})
+set(NCS_VERSION_MAJOR ${CMAKE_MATCH_1})
 
-string(REGEX MATCH "VERSION_MINOR = ([0-9]*)" _ ${ver})
-set(ZWEAR_VERSION_MINOR ${CMAKE_MATCH_1})
+string(REGEX MATCH "NCS_MINOR = ([0-9]*)" _ ${ncsver})
+set(NCS_VERSION_MINOR ${CMAKE_MATCH_1})
 
-string(REGEX MATCH "PATCHLEVEL = ([0-9]*)" _ ${ver})
-set(ZWEAR_VERSION_PATCH ${CMAKE_MATCH_1})
+string(REGEX MATCH "NCS_PATCH = ([0-9]*)" _ ${ncsver})
+set(NCS_VERSION_PATCH ${CMAKE_MATCH_1})
 
-string(REGEX MATCH "VERSION_TWEAK = ([0-9]*)" _ ${ver})
-set(ZWEAR_VERSION_TWEAK ${CMAKE_MATCH_1})
+# SW Version
+set(SourceVersionFile "${CMAKE_CURRENT_SOURCE_DIR}/info/sw_version.txt")
+file(STRINGS ${SourceVersionFile} swver)
 
 # Authentication key
 set(SourceAuthFile "${CMAKE_CURRENT_SOURCE_DIR}/info/authentication_key.txt")
@@ -70,6 +71,6 @@ execute_process(
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} \
                   -DCURRENT_TIME_OF_BUILD=\"${CURRENT_TIME}\" \
                   -DSECRET_KEY=\"${key}\" \
-                  -DFW_BUILD=\"${FW_BUILD_GIT}\" \
-                  -DSW_REVISION=\"${ZWEAR_VERSION_MAJOR}.${ZWEAR_VERSION_MINOR}.${ZWEAR_VERSION_PATCH}.${ZWEAR_VERSION_TWEAK}\" \
+                  -DFW_BUILD=\"${NCS_VERSION_MAJOR}.${NCS_VERSION_MINOR}.${NCS_VERSION_PATCH}\" \
+                  -DSW_REVISION=\"${swver}\" \
                   ")

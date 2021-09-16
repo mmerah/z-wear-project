@@ -34,11 +34,23 @@ jobs:
           pip3 install -r zephyr/scripts/requirements.txt
           pip3 install -r nrf/scripts/requirements.txt
           pip3 install -r bootloader/mcuboot/scripts/requirements.txt
-          
+
+      - name: Generate build number
+        id: buildnumber
+        uses: einaregilsson/build-number@v3
+        with:
+          token: ${{secrets.github_token}} 
+
+      - name: Get version variable
+        id: getversion
+        working-directory: z-wear-project
+        run:
+          echo "::set-output name=version::$(cat application/app/info/sw_version.txt)"
+
       - name: Build firmware
         working-directory: z-wear-project
         run: |
-          west build application/app/ -b nrf52840dk_nrf52840
+          west build application/app/ -b nrf52840dk_nrf52840 -- -DCONFIG_MCUBOOT_IMAGE_VERSION=\"${{ steps.getversion.outputs.version }}+${{ steps.buildnumber.outputs.build_number }}\"
           
       - name: Archive firmware
         uses: actions/upload-artifact@v2
@@ -48,9 +60,10 @@ jobs:
           
       - name: Automatic Releases
         uses: marvinpinto/action-automatic-releases@v1.2.1
+        if: ${{ github.ref == 'refs/heads/master' }}
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          automatic_release_tag: "latest"
+          automatic_release_tag: v${{ steps.getversion.outputs.version }}
           prerelease: true
           title: "Development Build"
           files: |
