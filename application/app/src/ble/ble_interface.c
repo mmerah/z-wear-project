@@ -196,6 +196,12 @@ static void connected(struct bt_conn *conn, uint8_t err)
         LOG_INF("Connection supervisory timeout: %u", info.le.timeout);
     }
 
+    /* 
+    Delays the start of the MTU exchange process. Seems like some recent
+    Samsung phones cannot connect to the device otherwise.
+    */
+    k_busy_wait(500000);
+
     exchange_params.func = exchange_func;
     bt_gatt_exchange_mtu(connection_get(), &exchange_params);
 
