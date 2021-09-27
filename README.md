@@ -15,4 +15,4 @@ This will contain:
 - Build environment management: make a conda package work for nRF-Command-Lines-Tools. Make the bash script more compatible, right now it would only work on Linux and if you do not change the default Miniconda3 installation path.
 - GitHub Actions: Get a python script to calculate code sizes and deltas and incorporate it into a GitHub Action. Make action faster using caching. Incorporate automated unit testing and automated versionning.
 - Template code: Code is not ideal right now, it is only a draft and was written quickly. Missing lots of features.
-- Incorporate drivers for wearables-oriented sensors that are not in the zephyr repo (incoming: MC3672, MLX90632, BQ274xx (this one already exists for zephyr but this has more functionalities), LC709204, AD8233 (this is a bit special), and more ...).
+- Incorporate drivers for wearables-oriented sensors that are not in the zephyr repo.
