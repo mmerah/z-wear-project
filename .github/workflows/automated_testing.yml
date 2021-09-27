@@ -22,7 +22,7 @@ jobs:
         working-directory: z-wear-project
         run: |
           pip3 install -U west
-          west init -m https://github.com/nrfconnect/sdk-nrf --mr v1.6.0-rc2
+          west init -m https://github.com/nrfconnect/sdk-nrf --mr v1.6.0
           west update
           west zephyr-export
           pip3 install -r zephyr/scripts/requirements.txt

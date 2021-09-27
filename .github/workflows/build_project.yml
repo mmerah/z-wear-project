@@ -57,6 +57,11 @@ jobs:
         with:
           name: firmware
           path: z-wear-project/build/zephyr/zephyr.*
+
+      - name: Rename update image
+        working-directory: z-wear-project
+        run: |
+          mv build/zephyr/app_update.bin build/zephyr/app_update_v${{ steps.getversion.outputs.version }}.bin
           
       - name: Automatic Releases
         uses: marvinpinto/action-automatic-releases@v1.2.1
@@ -68,5 +73,5 @@ jobs:
           title: "Development Build"
           files: |
             z-wear-project/LICENSE
-            z-wear-project/build/zephyr/app_update.bin
+            z-wear-project/build/zephyr/app_update_v${{ steps.getversion.outputs.version }}.bin
             z-wear-project/build/zephyr/merged.hex
