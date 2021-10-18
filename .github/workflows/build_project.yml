@@ -79,6 +79,17 @@ jobs:
           export ZEPHYR_TOOLCHAIN_VARIANT=gnuarmemb
           export GNUARMEMB_TOOLCHAIN_PATH="~/gnuarmemb/gcc-arm-none-eabi-9-2019-q4-major"
           west build application/app/ -b nrf52840dk_nrf52840 -- -DCONFIG_MCUBOOT_IMAGE_VERSION=\"${{ steps.getversion.outputs.version }}+${{ steps.buildnumber.outputs.build_number }}\"
+
+      - name: Stamp revision
+        shell: bash
+        working-directory: z-wear-project
+        continue-on-error: True
+        run: |
+          sudo apt install binutils-arm-none-eabi
+          pip install psycopg2-binary
+          pip install click
+          pip install prettytable
+#          python3 application/codesizes.py stamp build/zephyr/zephyr.elf
           
       - name: Archive firmware
         uses: actions/upload-artifact@v2
