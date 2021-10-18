@@ -69,18 +69,19 @@ put into operational before reading RSOC, then putting back into sleep.
 static int lc709204_command_reg_read(struct lc709204_data *lc709204, uint8_t reg_addr,
                                      uint16_t *val)
 {
-    uint8_t i2c_data[2];
+    uint8_t i2c_data[3];
     int status;
 
     status = i2c_burst_read(lc709204->i2c, DT_INST_REG_ADDR(0), reg_addr,
-                            i2c_data, 2);
+                            i2c_data, 3);
     if (status < 0)
     {
         LOG_ERR("Unable to read register");
-        return -EIO;
+        return status;
     }
 
     *val = (i2c_data[1] << 8) | i2c_data[0];
+    *crc = i2c_data[2];
 
     return 0;
 }
@@ -95,15 +96,15 @@ static int lc709204_command_reg_read(struct lc709204_data *lc709204, uint8_t reg
 static int lc709204_command_reg_write(struct lc709204_data *lc709204, uint8_t reg_addr,
                                       uint16_t value)
 {
-    uint8_t tx_buf[2] = {value >> 8, value & 0xFF};
+    uint8_t tx_buf[3] = {value & 0xFF, value >> 8, *crc};
     int status = -EIO;
 
     status = i2c_burst_write(lc709204->i2c, DT_INST_REG_ADDR(0), reg_addr,
-                             tx_buf, 2);
+                             tx_buf, 3);
     if (status < 0)
     {
         LOG_ERR("Unable to write register.");
-        return -EIO;
+        return status;
     }
     return 0;
 }
@@ -130,6 +131,11 @@ static int lc709204_channel_get(const struct device *dev,
         val->val2 = 0;
         break;
 
+    case SENSOR_CHAN_GAUGE_VOLTAGE:
+        val->val1 = lc709204->voltage;
+        val->val2 = 0;
+        break;
+
     default:
         return -ENOTSUP;
     }
@@ -150,13 +156,23 @@ static int lc709204_sample_fetch(const struct device *dev,
 {
     struct lc709204_data *lc709204 = dev->data;
     int status = 0;
+    uint8_t crc = 0;
 
     switch (chan)
     {
     case SENSOR_CHAN_GAUGE_STATE_OF_CHARGE:
-        status = lc709204_command_reg_write(
-            lc709204, LC709204_REG_RSOC, &lc709204->state_of_charge);
-        ;
+        status = lc709204_command_reg_read(lc709204, LC709204_REG_RSOC,
+                                           &(lc709204->state_of_charge), &crc);
+        if (status < 0)
+        {
+            LOG_ERR("Failed to read state of charge");
+            return -EIO;
+        }
+        break;
+
+    case SENSOR_CHAN_GAUGE_VOLTAGE:
+        status = lc709204_command_reg_read(lc709204, LC709204_REG_CELL_VOLTAGE,
+                                           &(lc709204->voltage), &crc);
         if (status < 0)
         {
             LOG_ERR("Failed to read state of charge");
@@ -181,7 +197,6 @@ static int lc709204_gauge_init(const struct device *dev)
     struct lc709204_data *lc709204 = dev->data;
     const struct lc709204_config *const config = dev->config;
     int status = 0;
-    uint16_t id;
 
     lc709204->i2c = device_get_binding(config->bus_name);
     if (lc709204->i2c == NULL)
@@ -191,9 +206,22 @@ static int lc709204_gauge_init(const struct device *dev)
         return -EINVAL;
     }
 
+    /**
+     * When you write 0x1234 to reg 0xFF:
+     * CRC-8 is computed from (in order):
+     * - 0x16 (slave adress in write mode)
+     * - 0xFF (Register adress you write to)
+     * - 0x34 (LSB)
+     * - 0x12 (MSB)
+     * On https://crccalc.com/ in Hex input type, you can calculate the
+     * CRC-8. You would input "16FF3412" for the example above.
+     */
+    uint8_t crc = 0x00; 
+
     /* Write APA */
+    crc = 0x82;
     status = lc709204_command_reg_write(lc709204,
-                                        LC709204_REG_APA, 0x1818);
+                                        LC709204_REG_APA, 0x1515, &crc);
     if (status < 0)
     {
         LOG_ERR("Could not set APA register, error: %d", status);
@@ -201,8 +229,9 @@ static int lc709204_gauge_init(const struct device *dev)
     }
 
     /* Write Change of Parameter */
-    status = lc709204_command_reg_write(lc709204,
-                                        LC709204_REG_CHANGE_OF_PARAMETER, 0x0000);
+    crc = 0x67;
+    status = lc709204_command_reg_write(lc709204, LC709204_REG_CHANGE_OF_PARAMETER,
+                                        0x0000, &crc);
     if (status < 0)
     {
         LOG_ERR("Could not set Change of Parameter register, error: %d", status);
@@ -210,9 +239,9 @@ static int lc709204_gauge_init(const struct device *dev)
     }
 
     /* Write TSENSE1 Thermistor B constant */
-    status = lc709204_command_reg_write(lc709204,
-                                        LC709204_REG_TSENSE1_B,
-                                        config->tsense1_b_constant);
+    crc = 0xE0;
+    status = lc709204_command_reg_write(lc709204, LC709204_REG_TSENSE1_B,
+                                        config->tsense1_b_constant, &crc);
     if (status < 0)
     {
         LOG_ERR("Could not set TSENSE1 Themistor B, error: %d", status);
@@ -220,8 +249,9 @@ static int lc709204_gauge_init(const struct device *dev)
     }
 
     /* Write Status Bit */
+    crc = 0xD9;
     status = lc709204_command_reg_write(lc709204,
-                                        LC709204_REG_STATUS_BIT, 0x0001);
+                                        LC709204_REG_STATUS_BIT, 0x0001, &crc);
     if (status < 0)
     {
         LOG_ERR("Could not set Status bit, error: %d", status);
@@ -229,8 +259,9 @@ static int lc709204_gauge_init(const struct device *dev)
     }
 
     /* Write IC Power Mode */
+    crc = 0x64;
     status = lc709204_command_reg_write(lc709204,
-                                        LC709204_REG_IC_POWER_MODE, 0x0001);
+                                        LC709204_REG_IC_POWER_MODE, 0x0001, &crc);
     if (status < 0)
     {
         LOG_ERR("Could not set IC Power Mode, error: %d", status);
