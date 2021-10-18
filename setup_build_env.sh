@@ -28,7 +28,7 @@ conda env create -n dev_env -f z-wear_env.yml
 conda activate dev_env
 
 # West initialization with nrf sdk version 1.6.0
-west init -m https://github.com/nrfconnect/sdk-nrf --mr v1.6.0
+west init -m https://github.com/nrfconnect/sdk-nrf --mr v1.7.0
 west update
 west zephyr-export
 
