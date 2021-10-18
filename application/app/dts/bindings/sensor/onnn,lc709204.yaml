@@ -1,0 +1,38 @@
+#
+# Copyright (c) 2020 Linumiz
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+description: ON Semiconductor LC709204 Fuel Gauge
+
+compatible: "onnn,lc709204"
+
+include: i2c-device.yaml
+
+properties:
+    design-voltage:
+      type: int
+      required: true
+      description: Battery Design Voltage in mV (3300 - 4400)
+
+    design-capacity:
+      type: int
+      required: true
+      description: Battery Design Capacity in mAh
+
+    terminate-voltage:
+      type: int
+      required: true
+      description: Battery Terminate Voltage in mV
+
+    tsense1-b-constant:
+      type: int
+      required: true
+      description: B constant for the NTC resistor on TSENSE1
+
+    alarm-gpios:
+      type: phandle-array
+      required: false
+      description: |
+        Description of this pin. ALARM_GAUGE

@@ -1,0 +1,29 @@
+# Copyright (c) 2019 Nordic Semiconductor ASA
+# SPDX-License-Identifier: Apache-2.0
+
+description: TI LDC1612 Inductance sensor device
+
+compatible: "ti,ldc1612"
+
+include: i2c-device.yaml
+
+properties:
+    int-gpios:
+      type: phandle-array
+      required: false
+      description: |
+        The INT signal default configuration is active-high.  The
+        property value should ensure the flags properly describe the
+        signal that is presented to the driver.
+
+    sd-gpios:
+      type: phandle-array
+      required: false
+      description: |
+        Description of this pin. Active-low.
+
+    clk-st-gpios:
+      type: phandle-array
+      required: false
+      description: |
+        Description of this pin. Active-high.
