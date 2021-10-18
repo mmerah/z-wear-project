@@ -76,6 +76,8 @@ jobs:
       - name: Build firmware
         working-directory: z-wear-project
         run: |
+          export ZEPHYR_TOOLCHAIN_VARIANT=gnuarmemb
+          export GNUARMEMB_TOOLCHAIN_PATH="~/gnuarmemb/gcc-arm-none-eabi-9-2019-q4-major"
           west build application/app/ -b nrf52840dk_nrf52840 -- -DCONFIG_MCUBOOT_IMAGE_VERSION=\"${{ steps.getversion.outputs.version }}+${{ steps.buildnumber.outputs.build_number }}\"
           
       - name: Archive firmware
