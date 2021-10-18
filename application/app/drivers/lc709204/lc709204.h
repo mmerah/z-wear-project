@@ -34,11 +34,13 @@ LOG_MODULE_REGISTER(lc709204, CONFIG_SENSOR_LOG_LEVEL);
 #define LC709204_REG_STATUS_BIT 0x16
 #define LC709204_REG_CYCLE_COUNT 0x17
 #define LC709204_REG_BATTERY_STATUS 0x19
+#define LC709204_REG_EMPTY_CELL_VOLTAGE 0x1D
 
 struct lc709204_data
 {
 	const struct device *i2c;
 	uint16_t state_of_charge;
+	uint16_t voltage;
 };
 
 struct lc709204_config

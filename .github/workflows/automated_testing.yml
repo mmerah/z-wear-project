@@ -22,14 +22,19 @@ jobs:
         working-directory: z-wear-project
         run: |
           pip3 install -U west
-          west init -m https://github.com/nrfconnect/sdk-nrf --mr v1.6.0-rc2
+          west init -m https://github.com/nrfconnect/sdk-nrf --mr v1.7.0
           west update
           west zephyr-export
           pip3 install -r zephyr/scripts/requirements.txt
 
       - name: Run all tests
         working-directory: z-wear-project
+        continue-on-error: true
         run: |
+          wget https://github.com/zephyrproject-rtos/sdk-ng/releases/download/v0.13.1/zephyr-toolchain-arm-0.13.1-linux-x86_64-setup.run
+          chmod +x zephyr-toolchain-arm-0.13.1-linux-x86_64-setup.run
+          ./zephyr-toolchain-arm-0.13.1-linux-x86_64-setup.run -- -d ~/zephyr-sdk-0.13.1
+          rm zephyr-toolchain-arm-0.13.1-linux-x86_64-setup.run
           zephyr/scripts/twister --coverage -p native_posix -p nrf52840dk_nrf52840 -T application/app/tests/ -W
           
       - name: Publish Unit Test Results

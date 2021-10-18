@@ -1,17 +1,11 @@
-# This is a basic workflow to help you get started with Actions
-
-name: Build and Release Latest
+name: Size Delta on Pull Requests
 
 on:
-  push:
-    branches: [ main ]
-    paths:
-      - application/app/**
   pull_request:
-    branches: [ main ]
+    branches: [ master ]
     paths:
       - application/app/**
-
+    
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -20,9 +14,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
         with:
-          fetch-depth: 2
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
           path: z-wear-project
-
+          
       - name: Install the required tools
         working-directory: z-wear-project
         run: |
@@ -59,58 +54,49 @@ jobs:
           sudo tar xjf gcc-arm-none-eabi-9-2019-q4-major-x86_64-linux.tar.bz2 -C ~/gnuarmemb
           export ZEPHYR_TOOLCHAIN_VARIANT=gnuarmemb
           export GNUARMEMB_TOOLCHAIN_PATH="~/gnuarmemb/gcc-arm-none-eabi-9-2019-q4-major"
-          source zephyr/zephyr-env.sh
+          source zephyr/zephyr-env.sh 
 
-      - name: Generate build number
-        id: buildnumber
-        uses: einaregilsson/build-number@v3
-        with:
-          token: ${{secrets.github_token}} 
-
-      - name: Get version variable
-        id: getversion
+      - name: Dependencies for Code Size Delta
         working-directory: z-wear-project
-        run:
-          echo "::set-output name=version::$(cat application/app/info/sw_version.txt)"
+        run: |
+          sudo apt install binutils-arm-none-eabi
+          pip install psycopg2-binary
+          pip install click
+          pip install prettytable
 
       - name: Build firmware
         working-directory: z-wear-project
         run: |
           export ZEPHYR_TOOLCHAIN_VARIANT=gnuarmemb
           export GNUARMEMB_TOOLCHAIN_PATH="~/gnuarmemb/gcc-arm-none-eabi-9-2019-q4-major"
-          west build application/app/ -b nrf52840dk_nrf52840 -- -DCONFIG_MCUBOOT_IMAGE_VERSION=\"${{ steps.getversion.outputs.version }}+${{ steps.buildnumber.outputs.build_number }}\"
-
-      - name: Stamp revision
+          west build -b nrf52840dk_nrf52840 -s application/app
+          
+      - name: Diff revision
+        id: diff_rev
         shell: bash
         working-directory: z-wear-project
-        continue-on-error: True
         run: |
-          sudo apt install binutils-arm-none-eabi
-          pip install psycopg2-binary
-          pip install click
-          pip install prettytable
-#          python3 application/codesizes.py stamp build/zephyr/zephyr.elf
+          delta=$(python3 application/codesizes.py diff build/zephyr/zephyr.elf)
+          delta="${delta//'%'/'%25'}"
+          delta="${delta//$'\n'/'%0A'}"
+          delta="${delta//$'\r'/'%0D'}"
+          echo "::set-output name=delta_code::$delta"
           
-      - name: Archive firmware
-        uses: actions/upload-artifact@v2
+      - name: Auto Comment
+        uses: bubkoo/auto-comment@v1
         with:
-          name: firmware
-          path: z-wear-project/build/zephyr/zephyr.*
-
-      - name: Rename update image
-        working-directory: z-wear-project
-        run: |
-          mv build/zephyr/app_update.bin build/zephyr/app_update_v${{ steps.getversion.outputs.version }}.bin
-          
-      - name: Automatic Releases
-        uses: marvinpinto/action-automatic-releases@v1.2.1
-        if: ${{ github.ref == 'refs/heads/master' }}
-        with:
-          repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          automatic_release_tag: v${{ steps.getversion.outputs.version }}
-          prerelease: true
-          title: "Development Build"
-          files: |
-            z-wear-project/LICENSE
-            z-wear-project/build/zephyr/app_update_v${{ steps.getversion.outputs.version }}.bin
-            z-wear-project/build/zephyr/merged.hex
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          pullRequestOpened: >
+            👋 @{{ author }}
+      
+            Thank you for raising your pull request.
+      
+            This is the code delta:
+      
+            ```
+      
+            ${{ steps.diff_rev.outputs.delta_code }}
+      
+            ```
+      
+            Please make sure you have followed our contributing guidelines. We will review it as soon as possible.

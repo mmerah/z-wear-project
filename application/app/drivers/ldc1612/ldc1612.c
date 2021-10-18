@@ -312,20 +312,6 @@ static int ldc1612_init(const struct device *dev)
 
     k_busy_wait(3000);
 
-    /* GET THE CLK_ST PIN */
-    drv_data->clk_st_gpio = device_get_binding(cfg->clk_st_label);
-    if (drv_data->clk_st_gpio == NULL)
-    {
-        LOG_ERR("Failed to get pointer to %s device!", log_strdup(cfg->clk_st_label));
-        return -EINVAL;
-    }
-
-    err = gpio_pin_configure(drv_data->clk_st_gpio, cfg->clk_st_pin,
-                             GPIO_OUTPUT | GPIO_OUTPUT_HIGH);
-    err = gpio_pin_set(drv_data->clk_st_gpio, cfg->clk_st_pin, 1);
-
-    k_busy_wait(3000);
-
     /* CLOCK DIVIDER 0 TO ... */
     if (ldc1612_write(LDC1612_REG_CLOCK_DIVIDERS0,
                       LDC1612_FIN_DIV0_1 | LDC1612_FREF_DIV0_1) < 0)
@@ -440,8 +426,6 @@ static int ldc1612_init(const struct device *dev)
         return -EINVAL;
     }
 
-    gpio_pin_set(drv_data->clk_st_gpio, cfg->clk_st_pin, 0);
-
     return 0;
 }
 
@@ -457,9 +441,6 @@ static struct ldc1612_config ldc1612_config = {
     .sd_pin = DT_INST_GPIO_PIN(0, sd_gpios),
     .sd_flags = DT_INST_GPIO_FLAGS(0, sd_gpios),
     .sd_label = DT_INST_GPIO_LABEL(0, sd_gpios),
-    .clk_st_pin = DT_INST_GPIO_PIN(0, clk_st_gpios),
-    .clk_st_flags = DT_INST_GPIO_FLAGS(0, clk_st_gpios),
-    .clk_st_label = DT_INST_GPIO_LABEL(0, clk_st_gpios),
 };
 
 DEVICE_DT_INST_DEFINE(0, &ldc1612_init, NULL,

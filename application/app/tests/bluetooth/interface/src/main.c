@@ -33,6 +33,11 @@
 #define SYS_REBOOT_COLD 1
 void sys_reboot(int type) {}
 
+int bt_conn_set_security(struct bt_conn *conn, bt_security_t sec)
+{
+    return 0;
+}
+
 /************************************************
  *  ... FAKES
  ***********************************************/

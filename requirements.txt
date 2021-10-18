@@ -30,7 +30,7 @@ anytree
 intelhex
 
 # it's west
-west>=0.7.2
+west>=0.10.1
 
 # used for windows based 'menuconfig'
 # "win32" is used for 64-bit Windows as well
@@ -84,6 +84,7 @@ sphinxcontrib-svg2pdfconverter
 pygments~=2.9
 
 # Used by zephyr_module
+PyYAML>=5.1
 pykwalify
 
 ##############################################################################
@@ -137,7 +138,7 @@ psutil
 ##############################################################################
 #### NRF
 ##############################################################################
-west>=0.11.0
+west>=0.11.1
 ecdsa
 imagesize>=1.2.0
 intelhex
@@ -146,8 +147,14 @@ regex
 recommonmark==0.6.0
 CommonMark>=0.9.1
 sphinxcontrib-mscgen>=0.6
-sphinx-ncs-theme==0.6.2
+sphinx-ncs-theme>=0.6.3
 pygments>=2.7.0
+m2r2
+sphinxcontrib-plantuml
+pygit2~=1.5
+pyyaml~=5.4
+azure-storage-blob~=12.8
+sphinx_markdown_tables
 
 ##############################################################################
 #### MCUBOOT

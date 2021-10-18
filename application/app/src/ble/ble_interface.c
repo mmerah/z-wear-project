@@ -134,10 +134,11 @@ static void connection_grab(struct bt_conn *conn_grabbed)
 static const struct bt_data ad[] =
     {
         BT_DATA_BYTES(BT_DATA_FLAGS, (BT_LE_AD_GENERAL | BT_LE_AD_NO_BREDR)),
-        BT_DATA_BYTES(BT_DATA_UUID16_ALL,
-                      BT_UUID_16_ENCODE(BT_UUID_HRS_VAL),
+        BT_DATA_BYTES(BT_DATA_UUID16_SOME,
                       BT_UUID_16_ENCODE(BT_UUID_BAS_VAL),
-                      BT_UUID_16_ENCODE(BT_UUID_DIS_VAL))};
+                      BT_UUID_16_ENCODE(BT_UUID_DIS_VAL)),
+        BT_DATA_BYTES(BT_DATA_TX_POWER, 0x00),
+    };
 
 /**
  * @brief Exchange MTU data.
@@ -195,8 +196,19 @@ static void connected(struct bt_conn *conn, uint8_t err)
         LOG_INF("Connection supervisory timeout: %u", info.le.timeout);
     }
 
+    /* 
+    Delays the start of the MTU exchange process. Seems like some recent
+    Samsung phones cannot connect to the device otherwise.
+    */
+    k_busy_wait(500000);
+
     exchange_params.func = exchange_func;
     bt_gatt_exchange_mtu(connection_get(), &exchange_params);
+
+    /* Set connection security level */
+    if (bt_conn_set_security(conn, BT_SECURITY_L2)) {
+		LOG_ERR("Failed to set security");
+	}
 
     /* Starts sampling data on connection */
     k_sem_give(&ble_conn);
