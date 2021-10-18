@@ -23,17 +23,43 @@ jobs:
           fetch-depth: 2
           path: z-wear-project
 
-      - name: Initialize
+      - name: Install the required tools
         working-directory: z-wear-project
         run: |
-          sudo apt install binutils-arm-none-eabi
-          pip3 install -U west
-          west init -m https://github.com/nrfconnect/sdk-nrf --mr v1.6.0
+          sudo apt update
+          sudo apt upgrade -y
+          wget https://apt.kitware.com/kitware-archive.sh
+          sudo bash kitware-archive.sh
+          sudo apt install --no-install-recommends git cmake ninja-build gperf \
+            ccache dfu-util device-tree-compiler wget \
+            python3-dev python3-pip python3-setuptools python3-tk python3-wheel xz-utils file \
+            make gcc gcc-multilib g++-multilib libsdl2-dev -y
+      
+      - name: Install west and nRF Connect SDK
+        working-directory: z-wear-project
+        run: |
+          pip3 install --user west
+          west init -m https://github.com/nrfconnect/sdk-nrf --mr v1.7.0
           west update
           west zephyr-export
+
+      - name: Install additional Python dependencies
+        working-directory: z-wear-project
+        run: |
           pip3 install -r zephyr/scripts/requirements.txt
           pip3 install -r nrf/scripts/requirements.txt
           pip3 install -r bootloader/mcuboot/scripts/requirements.txt
+
+      - name: Install the GNU Arm Embedded Toolchain
+        working-directory: z-wear-project
+        shell: bash
+        run: |
+          mkdir ~/gnuarmemb
+          wget https://developer.arm.com/-/media/Files/downloads/gnu-rm/9-2019q4/gcc-arm-none-eabi-9-2019-q4-major-x86_64-linux.tar.bz2
+          sudo tar xjf gcc-arm-none-eabi-9-2019-q4-major-x86_64-linux.tar.bz2 -C ~/gnuarmemb
+          export ZEPHYR_TOOLCHAIN_VARIANT=gnuarmemb
+          export GNUARMEMB_TOOLCHAIN_PATH="~/gnuarmemb/gcc-arm-none-eabi-9-2019-q4-major"
+          source zephyr/zephyr-env.sh
 
       - name: Generate build number
         id: buildnumber
